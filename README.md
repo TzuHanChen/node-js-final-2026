@@ -8,7 +8,6 @@
 
 關於後端程式的規劃跟撰寫，像是資料庫設計、程式如何拆分、要使用 TypeORM 或 pg，**同學都可自行決定**。驗收會從外部呼叫你的 API，然後檢查回應結果是否正確。
 
-
 ## 【環境準備】
 
 1. 安裝並啟動 [Docker Desktop](https://www.docker.com/products/docker-desktop/)，並確認 Node.js 版本 >= 20
@@ -36,10 +35,9 @@ node-js-final-2026/
 ```
 
 5. 承上，接著進入 `backend/`，初始化並安裝需要的後端套件，最後將專案根目錄的環境變數範本（`.env.example`）複製到 `backend/.env`。需注意：
-   * 記得不可把 `.env` 推上 GitHub
-   * 後端相關套件需安裝在 `backend/`，不可安裝在專案根目錄
-   * ⚠️ `.env` 裡的 `PORT=8080` **不可更動**，這個後端需運作在 **8080**，因為前端寫死 `http://127.0.0.1:8080/api/` 路徑，以及 Swagger 的 Try it out 也是使用這個 port；如果更動 8080 port，前端跟 Swagger 就會運作失敗
-
+  - 記得不可把 `.env` 推上 GitHub
+  - 後端相關套件需安裝在 `backend/`，不可安裝在專案根目錄
+  - ⚠️ `.env` 裡的 `PORT=8080` **不可更動**，這個後端需運作在 **8080**，因為前端寫死 `http://127.0.0.1:8080/api/` 路徑，以及 Swagger 的 Try it out 也是使用這個 port；如果更動 8080 port，前端跟 Swagger 就會運作失敗
 
 ```bash
 # 進入後端資料夾
@@ -57,25 +55,25 @@ npm install -D nodemon
 
 6. 承上，初始化並安裝套件完成後，接著開啟 `backend/package.json`，在 `scripts` 中設定後端的啟動指令。以下範例假設實際負責啟動伺服器的入口檔案為 `backend/bin/www.js`，在 `scripts` 設置：
 
-```
+```js
 "dev": "nodemon ./bin/www.js",
 "start": "node ./bin/www.js"
 ```
 
-* `npm run dev`：開發期使用，透過 nodemon 啟動後端，當程式碼變更時，會自動重新啟動
-* `npm start`：直接透過 Node.js 啟動後端，不會自動重新啟動。（GitHub Actions 驗收時會使用 `npm start`，所以記得要加上這個設定。）
+- `npm run dev`：開發期使用，透過 nodemon 啟動後端，當程式碼變更時，會自動重新啟動
+- `npm start`：直接透過 Node.js 啟動後端，不會自動重新啟動。（GitHub Actions 驗收時會使用 `npm start`，所以記得要加上這個設定。）
 
 ⚠️ 啟動指令需指向實際負責啟動伺服器的入口檔案。如果你的入口檔案是 `server.js`、`app.js` 或其他路徑，請依照實際的專案結構調整指令。
-
 
 **整體環境架構說明：**
 這份作業分成**開發期**與**容器化**兩個階段。
 
 **開發期：**
-* 整體開發環境包含前端、Swagger、PostgreSQL、測試，以及同學正在撰寫的 `backend/`
-* 前端、Swagger 與 PostgreSQL 透過 Docker Compose 啟動
-* 開發期雖然已經將 `backend/` 建立在作業專案裡，但目前的 `docker compose up -d` 還不會啟動後端
-* 後端需另外進入 `backend/`，透過 `npm run dev` 啟動
+
+- 整體開發環境包含前端、Swagger、PostgreSQL、測試，以及同學正在撰寫的 `backend/`
+- 前端、Swagger 與 PostgreSQL 透過 Docker Compose 啟動
+- 開發期雖然已經將 `backend/` 建立在作業專案裡，但目前的 `docker compose up -d` 還不會啟動後端
+- 後端需另外進入 `backend/`，透過 `npm run dev` 啟動
 
 ```txt
 node-js-final-2026/
@@ -89,14 +87,16 @@ PostgreSQL                # Docker Compose，跑在 localhost:5432
 ```
 
 **容器化階段：**
-* 待開發期功能做完、正式繳交作業之前，再替 `backend/` 撰寫 Dockerfile，並將 backend 服務加入 `docker-compose.yml`
-* 完成後，前端、Swagger、PostgreSQL 與後端都能透過 Docker Compose 啟動
+
+- 待開發期功能做完、正式繳交作業之前，再替 `backend/` 撰寫 Dockerfile，並將 backend 服務加入 `docker-compose.yml`
+- 完成後，前端、Swagger、PostgreSQL 與後端都能透過 Docker Compose 啟動
 
 ## 【主線任務】
 
 本週有 M0（確認後端服務正常啟動）、M1～M6 主軸任務，以及壓軸的容器化任務；另外有一個選做的 upload 加分題（圖片上傳功能，不列入驗收）。建議依據 Swagger 的分組順序，從 M0、M1 開始依序開發到 M6，最後再完成容器化任務。
 
 **任務項目：**
+
 - **M0｜確認後端服務啟動（需先完成）**
   - 內容：實作一支 GET /healthcheck 端點，回報服務狀態
   - 驗證：沒有獨立測試，但這支 API 服務要能正常運作
@@ -149,10 +149,10 @@ PostgreSQL                # Docker Compose，跑在 localhost:5432
 
 進行 M0～M6 開發時，建議同時開啟兩個終端機：
 
-* **終端機 A｜啟動後端**
+- **終端機 A｜啟動後端**
   - 說明：進入作業專案裡的 `backend/`，執行 `npm run dev`，讓後端持續監聽 `localhost:8080`
   - 路徑：node-js-final-2026/backend/
-* **終端機 B｜執行測試**：
+- **終端機 B｜執行測試**：
   - 說明：停留在專案根目錄，依照目前的任務進度執行 `npm run test:m1` ～ `npm run test:m6`
   - 路徑：node-js-final-2026/
 
@@ -171,7 +171,7 @@ PostgreSQL                # Docker Compose，跑在 localhost:5432
 - **自動建表**：後端初始連到的是一個空資料庫（有 database、但沒有任何資料表），所以啟動時就得把需要的資料表建好
 - **port 與後端服務啟動**：後端的 port 固定用 8080（參照環境準備第 5 點），而且 `GET /healthcheck` 要等資料庫就緒後才回應 200（M0）
 
-**壓軸任務：容器化**
+**壓軸任務：**
 
 從 M0、M1 一路到 M6 都完成後，接著要進行最後的容器化任務。
 在專案的 `backend/` 裡寫好 `Dockerfile`、`.dockerignore`（至少排除 `node_modules` 與 `.env`，別讓它們被打包到 image）。再照專案根目錄 `docker-compose.yml` 裡下方預留的 **W10 容器化挑戰**，根據註解寫好的規則、提示來將 backend 服務補上。
@@ -191,6 +191,7 @@ npm run test:smoke # 會測幾支基本 API，確認容器裡的後端與資料�
 如果是開發階段，則可使用 `npm run test:m1` ～ `npm run test:m6` 分任務完成的階段來測試。
 
 測試結果判別：
+
 - ✓ 表示測試通過
 - ✕ 表示測試失敗
 
@@ -206,8 +207,9 @@ npm run test:smoke # 會測幾支基本 API，確認容器裡的後端與資料�
 ## 【常見問題】
 
 排查問題前，可先確認目前的階段：
-* **開發期**：後端位於作業專案的 `backend/`，使用 `npm run dev` 啟動。
-* **容器化後**：後端位置不變，但改由 Docker Compose 啟動。
+
+- **開發期**：後端位於作業專案的 `backend/`，使用 `npm run dev` 啟動。
+- **容器化後**：後端位置不變，但改由 Docker Compose 啟動。
 
 **Q：後端連不上資料庫，或 `docker compose up` 啟動失敗？**
 
@@ -219,8 +221,8 @@ npm run test:smoke # 會測幾支基本 API，確認容器裡的後端與資料�
 
 代表已有其他程式使用 `8080`，常見情況是：
 
-* 重複執行了兩次 `npm run dev`
-* Docker backend 與本機執行的 backend 同時啟動
+- 重複執行了兩次 `npm run dev`
+- Docker backend 與本機執行的 backend 同時啟動
 
 如果是 Docker backend 占用，可先在專案根目錄執行：`docker compose stop backend`，再進入 `backend/` 啟動本機後端。
 （記得不可修改 8080，因為前端與 Swagger 都固定使用這個 Port。）
@@ -230,8 +232,8 @@ npm run test:smoke # 會測幾支基本 API，確認容器裡的後端與資料�
 `ECONNREFUSED` 通常代表測試連不到 `localhost:8080`，也就是後端尚未啟動或啟動失敗。
 可先開啟：`http://localhost:8080/healthcheck`，這支 API 用來確認後端與資料庫是否已準備完成。若無法正常回應，請先查看後端終端機或 Docker log。
 
-* 開發期請進入 `backend/` 執行：`npm run dev`
-* 容器化後請在專案根目錄執行：`docker compose up -d --build backend postgres`
+- 開發期請進入 `backend/` 執行：`npm run dev`
+- 容器化後請在專案根目錄執行：`docker compose up -d --build backend postgres`
 
 確認 `/healthcheck` 可正常回應後，再執行測試。
 
@@ -245,6 +247,7 @@ npm run test:smoke # 會測幾支基本 API，確認容器裡的後端與資料�
 **Q：頁面只剩選單和頁尾，內容一片空白？**
 
 先查看瀏覽器 Console。如果同時出現 `401`、`無效的 token` 或`未授權訊息`，可能是瀏覽器仍保留舊的登入 token。通常發生情境：
+
 - 執行過 `db:reset`
 - 修改過 `JWT_SECRET`
 - 重新建立過資料庫
@@ -262,12 +265,14 @@ npm run test:smoke # 會測幾支基本 API，確認容器裡的後端與資料�
 **Q：M5 報名課程一直卡在錯誤訊息？**
 
 以下四句必須完全一致，包含文字、標點與空格：
+
 ```txt
 已經報名過此課程
 已無可使用堂數
 已達最大參加人數，無法參加
 請先登入
 ```
+
 可再檢查這些文字是否完全一致。
 
 **Q：容器重啟後資料不見了？**
@@ -284,21 +289,23 @@ npm run test:smoke # 會測幾支基本 API，確認容器裡的後端與資料�
 **Q：GitHub Actions 紅燈，要怎麼找問題？**
 
 進入失敗的 workflow，依序查看：
+
 1. 哪一個 job 失敗。
 2. 第一個出現紅色叉叉的 step。
 3. 該 step 中最早出現的錯誤訊息。
 
 常見方向：
 
-* 找不到 `backend/`：確認後端是否建立於專案根目錄，並已 commit、push 到 GitHub。
-* backend 無法啟動：檢查啟動指令、環境變數與資料庫連線。
-* 測試失敗：依測試名稱回本機執行對應的 `npm run test:m{N}`。
+- 找不到 `backend/`：確認後端是否建立於專案根目錄，並已 commit、push 到 GitHub。
+- backend 無法啟動：檢查啟動指令、環境變數與資料庫連線。
+- 測試失敗：依測試名稱回本機執行對應的 `npm run test:m{N}`。
 
 建議先在本機重現並修正，再重新 push。
 
 **Q：哪些檔案不能修改？**
 
 以下內容屬於作業專案原先環境（前端、文件、驗收檔案），請勿修改：
+
 ```txt
 frontend/
 docs/
