@@ -12,6 +12,13 @@ app.use(express.json());
 // 路由掛載（後續步驟逐一加入）
 
 // 404 錯誤
+app.use((req, res, next) => {
+  res.status(404).json({
+    status: 'error',
+    message: "無此路由",
+  })
+  return
+});
 
 // 全域錯誤處理
 app.use((err, req, res, next) => {
