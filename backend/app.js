@@ -8,6 +8,14 @@ app.use(cors());
 app.use(express.json());
 
 // M0 healthcheck（下一步實作）
+app.get("/healthcheck", async (req, res) => {
+  try {
+    await dataSource.query("SELECT 1");
+    res.status(200).send("OK");
+  } catch {
+    res.status(503).send("Service Unavailable");
+  }
+});
 
 // 路由掛載（後續步驟逐一加入）
 
