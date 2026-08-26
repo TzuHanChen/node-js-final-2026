@@ -8,7 +8,7 @@ router.post("/login", usersController.login);
 
 // 需要登入 → 掛 isAuth
 router.get("/profile", isAuth, usersController.getProfile);
-// router.put("/profile", isAuth, usersController.putProfile);
-// router.put("/password", isAuth, usersController.putPassword);
+router.put("/profile", isAuth, usersController.putProfile);
+router.put("/password", isAuth, usersController.putPassword);
 
 module.exports = router;
