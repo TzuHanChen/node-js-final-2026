@@ -126,6 +126,67 @@ const adminCoachesController = {
 		});
 		return;
 	},
+
+	async getAdminCourses(req, res, next) {
+		const courses = await dataSource.query(`
+		  SELECT c.id, c.name, c.start_at, c.end_at, c.max_participants, c.meeting_url,
+		    COUNT(cb.id)::int AS participants
+		  FROM "courses" c
+			LEFT JOIN "course_bookings" cb
+			ON c.id = cb.course_id AND cb.cancelled_at IS NULL
+			WHERE c.user_id = $1
+			GROUP BY c.id
+			ORDER BY c.start_at DESC
+		`, [req.user.id]);
+		const now = new Date();
+		const coursesWithStatus = courses.map(course => {
+			let status = '';
+			if (new Date(course.start_at) > now) status = "尚未開始";
+			else if (new Date(course.end_at) <= now) status = "已結束";
+			else status = "進行中";
+			return { ...course, status }
+		})
+		res.json({ status: "success", data: coursesWithStatus });
+		return;
+	},
+
+	async postAdminCourses(req, res, next) {
+		const { skill_id, name, description, start_at, end_at, max_participants, meeting_url } = req.body;
+		if (!isValidString(skill_id) ||
+			!isValidString(name) ||
+			!isValidString(description) ||
+			!isValidString(start_at) ||
+			!isValidString(end_at) ||
+			!isInteger(max_participants) ||
+			max_participants < 0 ||
+			!isValidString(meeting_url) ||
+			!meeting_url.startsWith("https")) {
+			return next(appError(400, "欄位未填寫正確"));
+		}
+		const coachRepo = dataSource.getRepository("Course");
+		const course = await coachRepo.save({
+			user_id: req.user.id,
+			skill_id: skill_id,
+			name: name,
+			description: description,
+			start_at: start_at,
+			end_at: end_at,
+			max_participants: max_participants,
+			meeting_url: meeting_url
+		})
+		res.json({ status: "success", data: { course } });
+		return;
+	},
+
+	async getAdminCourse(req, res, next) {
+		res.json({ status: "success", data: [] });
+		return;
+	},
+
+	async putAdminCourse(req, res, next) {
+		res.json({ status: "success", data: [] });
+		return;
+	},
 };
 
 module.exports = adminCoachesController;

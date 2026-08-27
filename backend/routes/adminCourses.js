@@ -1,1 +1,0 @@
-// router.get("/", isAuth, isCoach, controller.getAll);
