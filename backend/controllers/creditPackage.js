@@ -50,5 +50,21 @@ const creditPackageController = {
 			next(error);
 		}
 	},
+
+	async purchase(req, res, next) {
+		const repo = dataSource.getRepository("CreditPackage");
+		const pkg = await repo.findOneBy({ id: req.params.creditPackageId });
+		if (!pkg) {
+			return next(appError(400, "ID錯誤"));
+		}
+		const purchaseRepo = dataSource.getRepository("CreditPurchase");
+		await purchaseRepo.save({
+			user_id: req.user.id,
+			credit_package_id: pkg.id,
+			purchased_credits: pkg.credit_amount,
+			price_paid: pkg.price,
+		});
+		res.json({ status: "success", data: null });
+	},
 };
 module.exports = creditPackageController;
