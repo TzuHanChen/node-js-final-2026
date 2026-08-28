@@ -150,45 +150,45 @@ const usersController = {
 		res.json({ status: "success", data });
 	},
 
-	// async getCourses(req, res, next) {
-	// 	const purchaseRepo = dataSource.getRepository("CreditPurchase");
-	// 	const bookingRepo = dataSource.getRepository("CourseBooking");
+	async getCourses(req, res, next) {
+		const purchaseRepo = dataSource.getRepository("CreditPurchase");
+		const bookingRepo = dataSource.getRepository("CourseBooking");
 
-	// 	const purchases = await purchaseRepo.find({
-	// 		where: { user_id: req.user.id },
-	// 	});
-	// 	const totalCredits = purchases.reduce(
-	// 		(sum, p) => sum + p.purchased_credits,
-	// 		0,
-	// 	);
+		const purchases = await purchaseRepo.find({
+			where: { user_id: req.user.id },
+		});
+		const totalCredits = purchases.reduce(
+			(sum, p) => sum + p.purchased_credits,
+			0,
+		);
 
-	// 	const allBookings = await bookingRepo.find({
-	// 		where: { user_id: req.user.id },
-	// 		relations: { course: { user: true } },
-	// 		order: { course: { start_at: "ASC" } },
-	// 	});
-	// 	const creditUsage = allBookings.filter((b) => !b.cancelled_at).length;
-	// 	const creditRemain = totalCredits - creditUsage;
+		const allBookings = await bookingRepo.find({
+			where: { user_id: req.user.id },
+			relations: { course: { user: true } },
+			order: { course: { start_at: "ASC" } },
+		});
+		const creditUsage = allBookings.filter((b) => !b.cancelled_at).length;
+		const creditRemain = totalCredits - creditUsage;
 
-	// 	const courseBooking = allBookings.map((b) => ({
-	// 		course_id: b.course_id,
-	// 		name: b.course.name,
-	// 		start_at: b.course.start_at,
-	// 		end_at: b.course.end_at,
-	// 		meeting_url: b.course.meeting_url,
-	// 		coach_name: b.course.user.name,
-	// 		cancelled_at: b.cancelled_at,
-	// 	}));
+		const courseBooking = allBookings.map((b) => ({
+			course_id: b.course_id,
+			name: b.course.name,
+			start_at: b.course.start_at,
+			end_at: b.course.end_at,
+			meeting_url: b.course.meeting_url,
+			coach_name: b.course.user.name,
+			cancelled_at: b.cancelled_at,
+		}));
 
-	// 	res.json({
-	// 		status: "success",
-	// 		data: {
-	// 			credit_remain: creditRemain,
-	// 			credit_usage: creditUsage,
-	// 			course_booking: courseBooking,
-	// 		},
-	// 	});
-	// },
+		res.json({
+			status: "success",
+			data: {
+				credit_remain: creditRemain,
+				credit_usage: creditUsage,
+				course_booking: courseBooking,
+			},
+		});
+	},
 };
 
 module.exports = usersController;

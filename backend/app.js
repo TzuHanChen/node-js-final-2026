@@ -22,6 +22,7 @@ app.use("/api/coaches/skill", require("./routes/skill"));
 app.use("/api/users", require("./routes/users"));
 app.use("/api/credit-package", require("./routes/creditPackage"));
 app.use("/api/admin", require("./routes/admin"));
+app.use("/api/courses", require("./routes/courses"));
 
 // 404 錯誤
 app.use((req, res, next) => {
