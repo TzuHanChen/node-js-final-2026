@@ -1,6 +1,6 @@
 const { dataSource } = require("../db/data-source");
 const appError = require("../utils/appError");
-const { IsNull } = require("typeorm");
+const { IsNull, MoreThan, LessThanOrEqual } = require("typeorm");
 
 const coursesController = {
 	async createBooking(req, res, next) {
@@ -51,6 +51,32 @@ const coursesController = {
 		booking.cancelled_at = new Date();
 		await bookingRepo.save(booking);
 		res.json({ status: "success", data: null });
+	},
+
+	async getCourses(req, res, next) {
+		const courseRepo = dataSource.getRepository("Course");
+		const courses = await courseRepo.find({
+			where: {
+				start_at: LessThanOrEqual(new Date()),
+				end_at: MoreThan(new Date()),
+			},
+			relations: { user: true, skill: true },
+			order: { start_at: "ASC" },
+		});
+		const data = courses.map(course => {
+			return {
+				id: course.id,
+				name: course.name,
+				description: course.description,
+				start_at: course.start_at,
+				end_at: course.end_at,
+				max_participants: course.max_participants,
+				coach_name: course.user.name,
+				skill_name: course.skill.name,
+			}
+		});
+		res.json({ status: "success", data });
+		return;
 	},
 };
 

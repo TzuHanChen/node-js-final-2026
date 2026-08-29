@@ -4,5 +4,6 @@ const isAuth = require("../middlewares/isAuth");
 
 router.post("/:courseId", isAuth, coursesController.createBooking);
 router.delete("/:courseId", isAuth, coursesController.deleteBooking);
+router.get("/", coursesController.getCourses);
 
 module.exports = router;
