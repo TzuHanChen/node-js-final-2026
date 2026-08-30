@@ -235,6 +235,50 @@ const adminCoachesController = {
 		res.json({ status: "success", data: { course: course_new } });
 		return;
 	},
+
+	async getAdminRevenue(req, res, next) {
+		const { month } = req.query;
+		const monthNumber = {
+			january: 0, february: 1, march: 2, april: 3, may: 4, june: 5,
+			july: 6, august: 7, september: 8, october: 9, november: 10, december: 11
+		};
+		if (!isValidString(month) || !monthNumber[month]) {
+			return next(appError(400, "欄位未填寫正確"));
+		}
+		const year = new Date().getFullYear();
+		const startDate = new Date(year, monthNumber[month], 1);
+		const endDate = new Date(year, monthNumber[month] + 1, 1);
+		const bookings = await dataSource.query(`
+			SELECT cb.user_id FROM course_bookings cb
+      JOIN courses c ON c.id = cb.course_id
+      WHERE c.user_id = $1 AND cb.cancelled_at IS NULL
+      AND cb.created_at >= $2
+      AND cb.created_at < $3`,
+			[req.user.id, startDate, endDate],
+		);
+		console.log("bookings", bookings);
+		const courseCount = bookings.length;
+		const creditPackages = await dataSource.getRepository('CreditPackage').find();
+		const totalPrice = creditPackages.reduce((total, package) =>
+			total + Number(package.price || 0)
+			, 0);
+		const totalCredits = creditPackages.reduce((total, package) =>
+			total + Number(package.credit_amount || 0)
+			, 0);
+		const averageCreditPrice = totalCredits === 0 ? 0 : totalPrice / totalCredits;
+		const revenue = Math.floor(courseCount * averageCreditPrice);
+		const participants = new Set(bookings.map((booking) => booking.user_id)).size;
+		res.json({
+			status: "success", data: {
+				total: {
+					revenue: revenue,
+					participants: participants,
+					course_count: courseCount
+				}
+			}
+		});
+		return;
+	},
 };
 
 module.exports = adminCoachesController;
