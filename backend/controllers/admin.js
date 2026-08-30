@@ -256,7 +256,6 @@ const adminCoachesController = {
       AND cb.created_at < $3`,
 			[req.user.id, startDate, endDate],
 		);
-		console.log("bookings", bookings);
 		const courseCount = bookings.length;
 		const creditPackages = await dataSource.getRepository('CreditPackage').find();
 		const totalPrice = creditPackages.reduce((total, package) =>

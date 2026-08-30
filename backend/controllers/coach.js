@@ -86,7 +86,6 @@ const coachController = {
       where: { coach_id: req.params.coachId },
       relations: { skill: true }
     });
-    console.log("coachSkills", coachSkills);
     if (!coachSkills) {
       return next(appError(400, "找不到該教練技能"));
     }
@@ -94,7 +93,6 @@ const coachController = {
       user: { name: user.name, role: user.role },
       coach: { ...coach, skills: coachSkills.map(skill => skill.name) }
     }
-    console.log("data", data);
     res.json({ status: "success", data });
     return;
   },
