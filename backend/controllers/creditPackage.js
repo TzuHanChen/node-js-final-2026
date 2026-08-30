@@ -41,13 +41,11 @@ const creditPackageController = {
 			const { creditPackageId } = req.params;
 			const result = await dataSource.getRepository("CreditPackage").delete(creditPackageId);
 			if (result.affected === 0) {
-				next(appError(400, "ID錯誤"));
-				return;
+				return next(appError(400, "ID錯誤"));
 			}
 			res.json({ status: "success" });
 		} catch (error) {
-			console.error(error);
-			next(error);
+			return next(error);
 		}
 	},
 
